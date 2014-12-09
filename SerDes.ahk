@@ -112,8 +112,8 @@ SerDes(src, out:="", indent:="") {
 		if InStr("{[", ch) {
 			val := {}, is_arr[val] := ch == "[", %push%(refs, &val)
 			if is_key
-				%ins%(kobj, 1, val), key := val
-			is_array? %push%(_obj, val) : %set%(_obj, key, is_key ? 0 : val)
+				%ins%(kobj, 1, val), key := val, is_keyString := false
+			is_array? %push%(_obj, val) : %set%(_obj, is_keyString ? key "" : key, is_key ? 0 : val)
 			, %ins%(stack, 1, val), is_key := ch == "{"
 			, next := q "{[0123456789-$" (is_key ? "}" : "]") ;// Chr(NumGet(ch, "Char")+2)
 		}
@@ -121,7 +121,7 @@ SerDes(src, out:="", indent:="") {
 		else if InStr("}]", ch) {
 			next := is_arr[stack[2]] ? "]," : "},"
 			if (kobj[1] == %del%(stack, 1))
-				key := %del%(kobj, 1), next := ":"
+				key := %del%(kobj, 1), next := ":", is_keyString := false
 		}
 		;// Token
 		else if InStr(",:", ch) {
@@ -131,7 +131,7 @@ SerDes(src, out:="", indent:="") {
 		}
 		;// String | Number | Object reference
 		else {
-			if (ch == q) { ;// string
+			if (is_string := ch == q) { ;// string
 				val := %del%(strings, 1)
 			} else { ;// number / object reference
 				if (is_ref := (ch == "$")) ;// object reference token
@@ -147,9 +147,9 @@ SerDes(src, out:="", indent:="") {
 				}
 			}
 			if is_key
-				key := val, next := ":"
+				key := val, is_keyString := is_string, next := ":"
 			else
-				is_array? %push%(_obj, val) : %set%(_obj, key, val)
+				is_array? %push%(_obj, is_string ? val "" : val) : %set%(_obj, is_keyString ? key "" : key, is_string ? val "" : val)
 				, next := is_array ? "]," : "},"
 		}
 	}
