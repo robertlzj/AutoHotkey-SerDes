@@ -78,7 +78,7 @@ SerDes(src, out:="", indent:="") {
 		"f":  "`f"   ;// formfeed
 	)}
 	;// Extract string literals
-	strings := [], i := 0, end := 0-is_v2 ;// v1.1=0, v2.0-a=-1 -> SubStr()
+	local strings := [], i := 0, end := 0-is_v2 ;// v1.1=0, v2.0-a=-1 -> SubStr()
 	while (i := InStr(src, q,, i+1)) {
 		j := i
 		while (j := InStr(src, q,, j+1))
@@ -96,7 +96,7 @@ SerDes(src, out:="", indent:="") {
 		%push%(strings, str) ;// strings.Insert(str) / strings.Push(str)
 	}
 	;// Begin recursive descent to parse markup
-	pos := 0
+	local pos := 0
 	, is_key := false ;// if true, active data is to be used as associative array key
 	, refs := [], kobj := [] ;// refs=object references, kobj=objects as keys
 	, stack := [tree := []]
@@ -212,7 +212,7 @@ _SerDes(obj, indent:="", lvl:=1, refs:=false) { ;// lvl,refs=internal parameters
 		"`a": "``a",     ;// alert (bell)
 		"`f": "``f"      ;// formfeed
 	)}
-	i := -1
+	local i := -1
 	while (i := InStr(obj, "``",, i+2))
 		obj := SubStr(obj, 1, i-1) . "````" . SubStr(obj, i+1)
 	for k, v in esc_seq {
