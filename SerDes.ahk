@@ -44,6 +44,7 @@
  *     {"a":["string"], "b":$2} -> '$2' references the object stored in 'a'
  */
 SerDes(src, out:="", indent:="") {
+	static
 	if IsObject(src) {
 		ret := _SerDes(src, indent)
 		if (out == "")
@@ -157,6 +158,7 @@ SerDes(src, out:="", indent:="") {
 }
 ;// Helper function, serialize object to string -> internal use only
 _SerDes(obj, indent:="", lvl:=1, refs:=false) { ;// lvl,refs=internal parameters
+	static
 	static q := Chr(34) ;// Double quote, for v1.1 & v2.0-a compatibility
 	
 	if IsObject(obj) {
